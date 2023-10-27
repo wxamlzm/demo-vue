@@ -2,9 +2,9 @@
  * @Author: zd
  * @Date: 2023-10-27 15:57:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-27 16:00:15
+ * @LastEditTime: 2023-10-27 16:14:38
  * @FilePath: \demo-vue\src\router\index.js
- * @Description: 
+ * @Description:
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -16,6 +16,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
+    redirect: '/stressTestPage',
     component: HomeView
   },
   {
