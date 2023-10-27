@@ -1,0 +1,236 @@
+// 默认样式组
+
+// home页头
+.global-c-home-header{
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  height:$global-v-home-header;
+  // background-color: $global-v-theme-color;
+  // 背景色换成背景图
+  // background: url('~@/assets/home/home_header.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position:50% 50%;
+
+
+  .global-c-home-header-logo{
+    width: $global-v-left-logo-width;
+    height: $global-v-home-header;
+    // background-color:$global-v-left-logo-background;
+
+    &>div:nth-child(1){
+      font-size: 22px;
+      text-align: center;
+      padding-top: 4px;
+    }
+    &>div:nth-child(2){
+      font-size: 12px;
+      opacity: 0.4;
+      text-align: center;
+    }
+  }
+
+  .global-c-home-header-page-button{
+    flex:1;
+    // padding: 30px 20px 0 10px;
+    width: 0;
+    z-index: 10;
+  }
+}
+
+// 页面主路由样式
+.global-c-home-page-main{
+  display: flex
+  flex-direction:column
+  height 100%
+  background-color $global-v-background-color
+
+  &>div:nth-child(1){
+    height 35px
+  }
+  &>div:nth-child(2){
+    flex:1;
+    height: 0
+    overflow: auto
+  }
+}
+
+// 大页面默认样式
+.global-c-page{
+  padding $global-v-block-distance
+  background-color $global-v-background-color
+  box-sizing: border-box;
+  min-width: 1200px
+  min-height: 650px
+}
+
+// 关联板块横向分割线
+.global-c-content-transverse-division{
+  background-color $global-v-background-color
+  height $global-v-content-distance
+}
+
+// 关联板块纵向分割线
+.global-c-content-portrait-division{
+  background-color $global-v-background-color
+  width $global-v-content-distance
+}
+
+// 板块标题样式
+.global-c-div-title{
+  font-weight: bold;
+  color: #333;
+  line-height: 30px;
+  height: 30px;
+  font-size: $global-v-text-size-title-weak;
+  letter-spacing: 2px;
+}
+// 内容间标题
+.global-c-title-box {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 20px 0 10px 0;
+  font-weight: 600;
+  color: #333;
+}
+// 板块样式
+.global-c-div-main{  
+  background-color:$global-v-div-background-color;
+  padding $global-v-block-padding 
+  box-sizing border-box
+}
+// 大页面板块表格
+.global-c-table-main{  
+  background-color:$global-v-div-background-color;
+  padding 2px 
+  box-sizing border-box
+}
+// 翻页框体样式
+.global-c-div-pagination{
+  background-color:$global-v-div-background-color;
+  padding $global-v-content-distance $global-v-block-padding
+  box-sizing border-box
+}
+
+
+// ==========================================
+//标准表格页面上方查询条样式
+.global-c-screen-main{  
+  background-color:$global-v-div-background-color;
+  padding $global-v-block-padding
+}
+.global-c-screen-div{
+  display flex;
+  height 30px
+  
+  .global-c-screen-left{
+    flex-grow: 1;
+  }
+  .global-c-screen-right{
+    width:240px;
+    text-align:right
+  }
+}
+.global-c-input-div{
+  display flex;
+  .global-c-input-lable{
+    width:70px;
+    line-height: 32px
+  }
+  .global-c-input-value{
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    width:0
+  }
+}
+.global-c-btnrows{
+  display flex;
+  justify-content flex-end;
+  
+  .el-button {
+    border: none;
+    background-color: #EDF1FD;
+    color: #333;
+  }
+}
+.global-c-screen-line{
+  position: relative;
+  overflow:hidden
+  background: #fdfdfd;
+  max-height 200px
+  transition: all 0.2s ease 0.01s;
+  padding 10px
+  z-index 999
+  border-radius: 6px;
+  box-shadow: 0 0 8px 0 #dcdcdc, 0 2px 4px 0 #dcdcdc
+
+
+  >>>.el-input__inner{
+    // background rgb(245,247,250)
+  }
+  >>>.el-range-input{
+    // background rgb(245,247,250)
+  }
+}
+.global-c-screen-1-line{
+  height 45px
+}
+.global-c-screen-2-line{
+  height 85px
+}
+.global-c-screen-3-line{
+  height 125px
+}
+.global-c-screen-4-line{
+  height 165px
+}
+.global-c-screen-oneline-1{
+  background: white;
+  box-shadow: 0 0 0 0 ;
+  max-height 40px
+  padding 0px
+}
+.global-c-screen-oneline-2{
+  background: white;
+  box-shadow: 0 0 0 0 ;
+  max-height 80px
+  padding 0px
+}
+.global-c-screen-oneline-3{
+  background: white;
+  box-shadow: 0 0 0 0 ;
+  max-height 120px
+  padding 0px
+}
+
+//==========form表单类型展示===========
+
+.global-c-form-table{
+  width: 100%;
+  margin: 0 auto;
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0;
+  td{
+    padding: 10px 10px 11px 10px;
+    border: #e4eef6 1px solid;
+    word-break: break-all;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    word-wrap: break-word;
+  }
+  .global-c-form-table-tb{
+    background: #f2f9fc;
+    padding-right: 6px;
+  }
+}
+
+//======设置MessageBox取消按钮向右浮动，左magin为10px，即与确定按钮间距为10px========
+.global-c-btn-custom-cancel {
+  float: right;
+  margin-left: 10px !important
+
+}

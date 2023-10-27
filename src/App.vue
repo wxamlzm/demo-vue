@@ -1,19 +1,13 @@
+<!--
+ * @Author: zd
+ * @Date: 2023-10-27 15:57:45
+ * @LastEditors: zd
+ * @LastEditTime: 2023-10-27 16:00:46
+ * @FilePath: \demo-vue\src\App.vue
+ * @Description: 
+-->
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
-    <router-view/>
+    <router-view />
   </div>
 </template>
-
-<style lang="stylus">
-#app
-  font-family Avenir, Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
-  margin-top 60px
-</style>

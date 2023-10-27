@@ -1,0 +1,114 @@
+.el-container {
+  height: 100%;
+}
+
+.el-header, .el-main {
+  padding: 0;
+}
+
+// 表格内部字体大小
+.el-table--small {
+  font-size: 13px;
+}
+.el-table{
+  .cell{
+    .caret-wrapper{
+      height: 18px;
+    }
+    .sort-caret.ascending{
+      top: -3px;
+    }
+    .sort-caret.descending{
+      bottom: -1px;
+    }
+  }
+}
+
+// 抽屉标题样式覆盖
+.el-drawer__header {
+  font-weight: bold;
+  color: #333;
+  line-height: 24px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  align-items: center;
+  display: flex;
+  margin-bottom: 0px;
+  padding: $global-v-block-padding;
+}
+
+// 弹出框标题样式覆盖
+.el-dialog__header {
+  font-weight: bold;
+  color: #333;
+  line-height: 24px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  padding: $global-v-block-padding;
+}
+
+// 弹出框样式覆盖
+.el-dialog__body {
+  color: #606266;
+  font-size: 14px;
+  word-break: break-all;
+  padding:  0 $global-v-block-padding $global-v-block-padding $global-v-block-padding;
+  box-sizing: border-box;
+}
+
+// 分页右对齐
+.el-pagination {
+  text-align: right;
+}
+
+// 表格表头行高
+.el-table th>.cell {
+  line-height: 23px;
+}
+// small表格的行高
+.el-table--small .el-table__body .el-table__cell {
+    padding: 4px 0;
+}
+.el-table--small .el-table__header .el-table__cell {
+    padding: 4px 0;
+}
+
+// dialog 垂直居中
+.el-dialog{
+    display: flex;
+    display: -ms-flex; /* 兼容IE */
+    flex-direction: column;
+    -ms-flex-direction: column; /* 兼容IE */
+    margin:0 !important;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    max-height 'calc(100% - %s)' % $global-v-block-distance
+    max-width 'calc(100% - %s)' % $global-v-block-distance
+  }
+.el-dialog .el-dialog__body{
+    max-height: 100%;
+    flex: 1;
+    -ms-flex: 1 1 auto; /* 兼容IE */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+.el-dialog__wrapper {
+    /*隐藏ie和edge中遮罩的滚动条*/
+    overflow: hidden;
+}
+// 必输星号放右边
+.el-form-item.is-required:not(.is-no-asterisk) {
+  .el-form-item__label:after {
+    content: '*';
+    color: #F56C6C;
+    margin-right: 4px;
+  }
+
+  .el-form-item__label:before {
+    display: none;
+  }
+}
