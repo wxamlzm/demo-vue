@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-30 16:42:21
+ * @LastEditTime: 2023-10-30 21:36:21
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -24,10 +24,18 @@
           :prop="key"
           :label="key"
         >
-          <el-table-column prop="test11" label="" />
-          <el-table-column prop="test12" label="" />
-          <el-table-column prop="test13" label="" />
-          <el-table-column prop="test14" label="" />
+          <el-table-column :key="`profitLabel_${key}`" prop="test11" label="" />
+          <el-table-column :key="`profitValue_${key}`" prop="test12" label="" />
+          <el-table-column
+            :key="`volatilityUp_${key}`"
+            prop="test13"
+            label=""
+          />
+          <el-table-column
+            :key="`volatilityDown_${key}`"
+            prop="test14"
+            label=""
+          />
         </el-table-column>
       </el-table-column>
     </el-table>
