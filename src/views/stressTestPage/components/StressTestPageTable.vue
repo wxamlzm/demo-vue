@@ -2,56 +2,43 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-27 15:03:41
- * @FilePath: \zb-risk-web-testing\src\views\otc\stressTestPage\components\StressTestPageTable.vue
+ * @LastEditTime: 2023-10-30 16:42:21
+ * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
 <template>
   <div class="stress-test-page-table table-border">
-    <div class="table-header">
-      <div
-        :style="{ width: sumCategoryCellWidth }"
-        class="category-col table-cell"
-      >
-        板块
-      </div>
-      <div class="data-col">
-        <div class="table-cell">压力情景</div>
-        <div class="sub-header">
-          <div :style="{ width: subHeaderWidth }" class="table-cell">
-            轻度压力
-          </div>
-          <div :style="{ width: subHeaderWidth }" class="table-cell">
-            中度压力
-          </div>
-          <div :style="{ width: subHeaderWidth }" class="table-cell">
-            重度压力
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="table-body" ref="stressTestTableRef" :key="tableKey">
-      <StressTestTableMainCategory
-        v-for="(mainCategoryDataArray, key) in tableDataGroupBymainCategory"
-        v-bind="$attrs"
-        :key="key"
-        :mainCategoryDataArray="mainCategoryDataArray"
-        :mainCategoryName="key"
-        @updateLabelWidth="updateLabelWidth"
-      />
-    </div>
+    <el-table
+      :data="tableDataFormat"
+      :header-cell-style="headerStyle"
+      style="width: 100%"
+    >
+      <el-table-column prop="date" label="板块" width="150">
+        <el-table-column prop="test1" label="大类"></el-table-column>
+        <el-table-column prop="test2" label="子类"></el-table-column>
+      </el-table-column>
+      <el-table-column label="压力情景">
+        <el-table-column
+          v-for="(stressSceneData, key) in tableDataGroupByStressScene"
+          :key="key"
+          :prop="key"
+          :label="key"
+        >
+          <el-table-column prop="test11" label="" />
+          <el-table-column prop="test12" label="" />
+          <el-table-column prop="test13" label="" />
+          <el-table-column prop="test14" label="" />
+        </el-table-column>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import StressTestTableMainCategory from './StressTestTableMainCategory'
 import { groupByArray } from '../utils'
 
 export default {
   name: 'StressTestPageTable',
-
-  components: { StressTestTableMainCategory },
 
   props: {
     tableData: {
@@ -72,6 +59,7 @@ export default {
   },
 
   computed: {
+    // 按大类分组
     tableDataGroupBymainCategory () {
       // 按plate_type_name分组
       const plateTypeNameResult = groupByArray(
@@ -80,6 +68,32 @@ export default {
       )
       const plateTypeNameGroup = plateTypeNameResult.arrayGroupByObject
       return plateTypeNameGroup
+    },
+    // 按压力等级分
+    tableDataGroupByStressScene () {
+      // 按stress_scene分组
+      const stressSceneResult = groupByArray(this.tableData, 'stress_scene')
+      const stressSceneGroup = stressSceneResult.arrayGroupByObject
+      return stressSceneGroup
+    },
+    // 按压力等级分
+    tableDataGroupByPlateCode () {
+      // 按stress_scene分组
+      const plateCodeResult = groupByArray(this.tableData, 'plate_code')
+      const plateCodeGroup = plateCodeResult.arrayGroupByObject
+      return plateCodeGroup
+    },
+    tableDataFormat () {
+      const tableDataFormatObj = {}
+      for (const key in this.tableDataGroupByPlateCode) {
+        tableDataFormatObj[key] = groupByArray(
+          this.tableDataGroupByPlateCode[key],
+          'stress_scene'
+        ).arrayGroupByObject
+      }
+      console.log(tableDataFormatObj)
+      // return this.tableData
+      return [{ test1: '测试1' }]
     }
   },
 
@@ -106,6 +120,15 @@ export default {
     updateLabelWidth (width) {
       this.subHeaderWidth = width
       this.initTable()
+    },
+    // 处理表头样式
+    headerStyle ({ row, column, rowIndex, columnIndex }) {
+      row, column, rowIndex, columnIndex
+
+      // 第三级表头不显示
+      if (rowIndex === 2) {
+        return 'display: none'
+      }
     }
   }
 }
