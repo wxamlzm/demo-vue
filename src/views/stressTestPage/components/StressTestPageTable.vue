@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-30 21:36:21
+ * @LastEditTime: 2023-10-30 22:31:24
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -24,15 +24,23 @@
           :prop="key"
           :label="key"
         >
-          <el-table-column :key="`profitLabel_${key}`" prop="test11" label="" />
-          <el-table-column :key="`profitValue_${key}`" prop="test12" label="" />
           <el-table-column
-            :key="`volatilityUp_${key}`"
+            :key="`volatility_value_${key}`"
+            prop="test11"
+            label=""
+          />
+          <el-table-column
+            :key="`volatility_value_${key}`"
+            prop="test12"
+            label=""
+          />
+          <el-table-column
+            :key="`credit_min_profit_${key}`"
             prop="test13"
             label=""
           />
           <el-table-column
-            :key="`volatilityDown_${key}`"
+            :key="`credit_min_profit_${key}`"
             prop="test14"
             label=""
           />
@@ -99,6 +107,17 @@ export default {
           'stress_scene'
         ).arrayGroupByObject
       }
+      const result = []
+
+      Object.keys(tableDataFormatObj).forEach(scene => {
+        tableDataFormatObj[scene].forEach(config => {
+          let newConfig = { ...config }
+          let key = `stress_scene_${scene}`
+          newConfig[key] = newConfig['stress_scene']
+          delete newConfig['stress_scene']
+          result.push(newConfig)
+        })
+      })
       console.log(tableDataFormatObj)
       // return this.tableData
       return [{ test1: '测试1' }]
