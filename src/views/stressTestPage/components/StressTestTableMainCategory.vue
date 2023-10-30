@@ -2,8 +2,8 @@
  * @Author: zd
  * @Date: 2023-10-26 08:45:23
  * @LastEditors: zd
- * @LastEditTime: 2023-10-27 13:23:06
- * @FilePath: \zb-risk-web-testing\src\views\otc\stressTestPage\components\StressTestTableMainCategory.vue
+ * @LastEditTime: 2023-10-30 14:57:40
+ * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestTableMainCategory.vue
  * @Description: 用于渲染压力测试情景页面的大类列表
 -->
 <template>
@@ -105,7 +105,7 @@ export default {
       const calcPanelWidth = calcPanelDom?.offsetWidth
       const volatilityPanelWidth = volatilityPanelDom?.offsetWidth
       const sum = calcPanelWidth + volatilityPanelWidth
-      console.log(calcPanelWidth, volatilityPanelWidth)
+      // console.log(calcPanelWidth, volatilityPanelWidth)
       this.stressSceneWidth = `${sum}px`
     }
   }
