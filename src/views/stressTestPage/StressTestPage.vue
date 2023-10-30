@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:04:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-27 15:59:45
+ * @LastEditTime: 2023-10-27 16:32:39
  * @FilePath: \demo-vue\src\views\stressTestPage\StressTestPage.vue
  * @Description: 压力测试情景
 -->
@@ -47,11 +47,9 @@
     <main class="global-c-div-main" style="overflow: auto">
       <el-tabs v-model="activeTab" type="border-card">
         <el-tab-pane label="市场" name="market"
-          ><StressTestPageTable
-            v-if="activeTab === 'market'"
-            :tableData="tableData"
-            tableType="market"
-        /></el-tab-pane>
+          >
+          <el-table></el-table>
+        </el-tab-pane>
         <el-tab-pane label="信用" name="credit"
           ><StressTestPageTable
             v-if="activeTab === 'credit'"
