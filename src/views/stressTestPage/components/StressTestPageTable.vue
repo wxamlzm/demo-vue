@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-30 22:31:24
+ * @LastEditTime: 2023-10-31 11:20:15
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -14,8 +14,8 @@
       style="width: 100%"
     >
       <el-table-column prop="date" label="板块" width="150">
-        <el-table-column prop="test1" label="大类"></el-table-column>
-        <el-table-column prop="test2" label="子类"></el-table-column>
+        <el-table-column prop="plate_type_name" label="大类"></el-table-column>
+        <el-table-column prop="plate_code_name" label="子类"></el-table-column>
       </el-table-column>
       <el-table-column label="压力情景">
         <el-table-column
@@ -24,26 +24,10 @@
           :prop="key"
           :label="key"
         >
-          <el-table-column
-            :key="`volatility_value_${key}`"
-            prop="test11"
-            label=""
-          />
-          <el-table-column
-            :key="`volatility_value_${key}`"
-            prop="test12"
-            label=""
-          />
-          <el-table-column
-            :key="`credit_min_profit_${key}`"
-            prop="test13"
-            label=""
-          />
-          <el-table-column
-            :key="`credit_min_profit_${key}`"
-            prop="test14"
-            label=""
-          />
+          <el-table-column :key="`label_${key}`" :prop="`label_${key}`" />
+          <el-table-column :key="`value_${key}`" :prop="`value_${key}`" />
+          <el-table-column :key="`credit_min_profit_${key}`" prop="test13" />
+          <el-table-column :key="`credit_min_profit_${key}`" prop="test14" />
         </el-table-column>
       </el-table-column>
     </el-table>
@@ -51,7 +35,7 @@
 </template>
 
 <script>
-import { groupByArray } from '../utils'
+import { groupByArray, transform } from '../utils'
 
 export default {
   name: 'StressTestPageTable',
@@ -60,6 +44,10 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    tableType: {
+      type: String,
+      default: ''
     }
   },
 
@@ -107,20 +95,18 @@ export default {
           'stress_scene'
         ).arrayGroupByObject
       }
-      const result = []
-
-      Object.keys(tableDataFormatObj).forEach(scene => {
-        tableDataFormatObj[scene].forEach(config => {
-          let newConfig = { ...config }
-          let key = `stress_scene_${scene}`
-          newConfig[key] = newConfig['stress_scene']
-          delete newConfig['stress_scene']
-          result.push(newConfig)
-        })
-      })
       console.log(tableDataFormatObj)
+      const transformResult = transform(tableDataFormatObj)
+      console.log(transformResult)
       // return this.tableData
-      return [{ test1: '测试1' }]
+      return [
+        {
+          plate_type_name: '商品板块',
+          plate_code_name: '有色金属',
+          label_ModerateStressScene: '计算结果',
+          value_ModerateStressScene: '123'
+        }
+      ]
     }
   },
 
