@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-31 11:20:15
+ * @LastEditTime: 2023-11-01 15:52:46
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -26,8 +26,14 @@
         >
           <el-table-column :key="`label_${key}`" :prop="`label_${key}`" />
           <el-table-column :key="`value_${key}`" :prop="`value_${key}`" />
-          <el-table-column :key="`credit_min_profit_${key}`" prop="test13" />
-          <el-table-column :key="`credit_min_profit_${key}`" prop="test14" />
+          <el-table-column
+            :key="`volatility_down_${key}`"
+            :prop="`volatility_down_${key}`"
+          />
+          <el-table-column
+            :key="`volatility_up_${key}`"
+            :prop="`volatility_down_${key}`"
+          />
         </el-table-column>
       </el-table-column>
     </el-table>
@@ -103,8 +109,40 @@ export default {
         {
           plate_type_name: '商品板块',
           plate_code_name: '有色金属',
+          // 轻度压力的计算结果
           label_ModerateStressScene: '计算结果',
-          value_ModerateStressScene: '123'
+          value_ModerateStressScene: '123',
+          volatility_down_ModerateStressScene: '波动率涨跌',
+          volatility_up_ModerateStressScene: '波动率涨跌',
+          // 中度压力数据
+          label_SeverStressScene: '计算结果',
+          value_SeverStressScene: '123',
+          volatility_down_SeverStressScene: '波动率涨跌',
+          volatility_up_SeverStressScene: '波动率涨跌',
+          // 重度压力数据
+          label_MildStressScene: '计算结果',
+          value_MildStressScene: '123',
+          volatility_down_MildStressScene: '波动率涨跌',
+          volatility_up_MildStressScene: '波动率涨跌'
+        },
+        {
+          plate_type_name: '商品板块',
+          plate_code_name: '有色金属',
+          // 轻度压力的计算结果
+          label_ModerateStressScene: '计算结果',
+          value_ModerateStressScene: '123',
+          volatility_down_ModerateStressScene: '-3%',
+          volatility_up_ModerateStressScene: '+3%',
+          // 中度压力数据
+          label_SeverStressScene: '计算结果',
+          value_SeverStressScene: '123',
+          volatility_down_SeverStressScene: '-3%',
+          volatility_up_SeverStressScene: '+3%',
+          // 重度压力数据
+          label_MildStressScene: '计算结果',
+          value_MildStressScene: '123',
+          volatility_down_MildStressScene: '-3%',
+          volatility_up_MildStressScene: '+3%'
         }
       ]
     }
