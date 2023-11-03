@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-26 08:55:58
  * @LastEditors: zd
- * @LastEditTime: 2023-10-31 09:44:19
+ * @LastEditTime: 2023-11-03 13:24:29
  * @FilePath: \demo-vue\src\views\stressTestPage\utils\index.js
  * @Description: 压力测试情景页面公共方法
  */
@@ -45,13 +45,20 @@ export function transform (data) {
   return result
 }
 
-// const before = {
-//   id1: {
-//     mild: [{ value: 1 }],
-//     moderate: [{ value: 2 }],
-//     server: [{ value: 3 }]
-//   }
-// }
-// const after = {
-//   id1: [{ value_mild: 1 }, { value_moderate: 2 }, { value_server: 3 }]
-// }
+// 按多个key对数组进行分组
+export function groupBy (array, keys) {
+  let map = new Map()
+  array.forEach(item => {
+    let key = ''
+    keys.forEach(k => {
+      key += item[k]
+    })
+
+    if (!map.has(key)) {
+      map.set(key, [])
+    }
+    map.get(key).push(item)
+  })
+
+  console.log(map)
+}
