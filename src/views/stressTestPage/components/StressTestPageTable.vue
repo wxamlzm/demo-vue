@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-03 09:10:54
+ * @LastEditTime: 2023-11-03 16:27:44
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -41,7 +41,10 @@
 </template>
 
 <script>
-import { groupByArray, transform, groupBy } from '../utils'
+import { groupByArray, transform, groupByDeep } from '../utils'
+const CALC_LABEL_TYPE1 = '计算结果'
+const CALC_LABEL_TYPE2 = '标的价格涨跌'
+const VOLATILITY_LABEL = '波动率涨跌'
 
 export default {
   name: 'StressTestPageTable',
@@ -101,94 +104,112 @@ export default {
           'stress_scene'
         ).arrayGroupByObject
       }
-      console.log(tableDataFormatObj)
-      const transformResult = transform(tableDataFormatObj)
-      console.log(transformResult)
       // return this.tableData
-      groupBy(this.tableData, [
-        'plate_type_name',
-        'plate_code_name',
+      const tableDataMap = groupByDeep(
+        this.tableData,
+        ['plate_type_name', 'plate_code_name'],
         'stress_scene'
-      ])
+      )
+      console.log()
+      const getDataFormat = (dataArray, key) => {
+        const plateTypeName = key.split('#')[0]
+        const plateCodeName = key.split('#')[1]
+        return [
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE1,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: VOLATILITY_LABEL,
+            volatility_up_ModerateStressScene: VOLATILITY_LABEL,
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE1,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: VOLATILITY_LABEL,
+            volatility_up_SeverStressScene: VOLATILITY_LABEL,
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE1,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: VOLATILITY_LABEL,
+            volatility_up_MildStressScene: VOLATILITY_LABEL
+          },
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE1,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: '-3%',
+            volatility_up_ModerateStressScene: '+3%',
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE1,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: '-3%',
+            volatility_up_SeverStressScene: '+3%',
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE1,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: '-3%',
+            volatility_up_MildStressScene: '+3%'
+          },
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE2,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: '-3%',
+            volatility_up_ModerateStressScene: '+3%',
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE2,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: '-3%',
+            volatility_up_SeverStressScene: '+3%',
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE2,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: '-3%',
+            volatility_up_MildStressScene: '+3%'
+          },
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE2,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: '-3%',
+            volatility_up_ModerateStressScene: '+3%',
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE2,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: '-3%',
+            volatility_up_SeverStressScene: '+3%',
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE2,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: '-3%',
+            volatility_up_MildStressScene: '+3%'
+          }
+        ]
+      }
 
-      return [
-        {
-          plate_type_name: '商品板块',
-          plate_code_name: '有色金属',
-          // 轻度压力的计算结果
-          label_ModerateStressScene: '计算结果',
-          value_ModerateStressScene: '123',
-          volatility_down_ModerateStressScene: '波动率涨跌',
-          volatility_up_ModerateStressScene: '波动率涨跌',
-          // 中度压力数据
-          label_SeverStressScene: '计算结果',
-          value_SeverStressScene: '123',
-          volatility_down_SeverStressScene: '波动率涨跌',
-          volatility_up_SeverStressScene: '波动率涨跌',
-          // 重度压力数据
-          label_MildStressScene: '计算结果',
-          value_MildStressScene: '123',
-          volatility_down_MildStressScene: '波动率涨跌',
-          volatility_up_MildStressScene: '波动率涨跌'
-        },
-        {
-          plate_type_name: '商品板块',
-          plate_code_name: '有色金属',
-          // 轻度压力的计算结果
-          label_ModerateStressScene: '计算结果',
-          value_ModerateStressScene: '123',
-          volatility_down_ModerateStressScene: '-3%',
-          volatility_up_ModerateStressScene: '+3%',
-          // 中度压力数据
-          label_SeverStressScene: '计算结果',
-          value_SeverStressScene: '123',
-          volatility_down_SeverStressScene: '-3%',
-          volatility_up_SeverStressScene: '+3%',
-          // 重度压力数据
-          label_MildStressScene: '计算结果',
-          value_MildStressScene: '123',
-          volatility_down_MildStressScene: '-3%',
-          volatility_up_MildStressScene: '+3%'
-        },
-        {
-          plate_type_name: '商品板块',
-          plate_code_name: '有色金属',
-          // 轻度压力的计算结果
-          label_ModerateStressScene: '计算结果',
-          value_ModerateStressScene: '123',
-          volatility_down_ModerateStressScene: '-3%',
-          volatility_up_ModerateStressScene: '+3%',
-          // 中度压力数据
-          label_SeverStressScene: '计算结果',
-          value_SeverStressScene: '123',
-          volatility_down_SeverStressScene: '-3%',
-          volatility_up_SeverStressScene: '+3%',
-          // 重度压力数据
-          label_MildStressScene: '计算结果',
-          value_MildStressScene: '123',
-          volatility_down_MildStressScene: '-3%',
-          volatility_up_MildStressScene: '+3%'
-        },
-        {
-          plate_type_name: '商品板块',
-          plate_code_name: '有色金属',
-          // 轻度压力的计算结果
-          label_ModerateStressScene: '计算结果',
-          value_ModerateStressScene: '123',
-          volatility_down_ModerateStressScene: '-3%',
-          volatility_up_ModerateStressScene: '+3%',
-          // 中度压力数据
-          label_SeverStressScene: '计算结果',
-          value_SeverStressScene: '123',
-          volatility_down_SeverStressScene: '-3%',
-          volatility_up_SeverStressScene: '+3%',
-          // 重度压力数据
-          label_MildStressScene: '计算结果',
-          value_MildStressScene: '123',
-          volatility_down_MildStressScene: '-3%',
-          volatility_up_MildStressScene: '+3%'
+      const tableDataFormatArray = []
+      tableDataMap.forEach((value, key, map) => {
+        tableDataFormatArray.push(getDataFormat(value, key))
+      })
+
+      return tableDataFormatArray.flat().sort((a, b) => {
+        if (a.plate_type_name !== b.plate_type_name) {
+          return a.plate_type_name.localeCompare(b.plate_type_name)
         }
-      ]
+
+        if (a.plate_code_name !== b.plate_code_name) {
+          return a.plate_code_name.localeCompare(b.plate_code_name)
+        }
+
+        return 0
+      })
     }
   },
 

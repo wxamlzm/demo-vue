@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-26 08:55:58
  * @LastEditors: zd
- * @LastEditTime: 2023-11-03 13:24:29
+ * @LastEditTime: 2023-11-03 15:06:06
  * @FilePath: \demo-vue\src\views\stressTestPage\utils\index.js
  * @Description: 压力测试情景页面公共方法
  */
@@ -60,5 +60,32 @@ export function groupBy (array, keys) {
     map.get(key).push(item)
   })
 
-  console.log(map)
+  return map
+}
+
+// 按多个key对数组进行分组,并进行二次分组
+export function groupByDeep (array, keys1, key2) {
+  let map = new Map()
+
+  array.forEach(item => {
+    let groupKey = ''
+    keys1.forEach((k, i) => {
+      if (i > 0) {
+        groupKey += '#'
+      }
+      groupKey += item[k]
+    })
+
+    if (!map.has(groupKey)) {
+      map.set(groupKey, {})
+    }
+
+    let subGroupKey = item[key2]
+    if (!map.get(groupKey)[subGroupKey]) {
+      map.get(groupKey)[subGroupKey] = []
+    }
+    map.get(groupKey)[subGroupKey].push(item)
+  })
+
+  return map
 }
