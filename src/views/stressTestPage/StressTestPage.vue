@@ -50,14 +50,14 @@
           <StressTestPageTable
             v-if="activeTab === 'market'"
             :tableData="tableData"
-            tableType="credit"
+            :tableType="activeTab"
           />
         </el-tab-pane>
         <el-tab-pane label="信用" name="credit"
           ><StressTestPageTable
             v-if="activeTab === 'credit'"
             :tableData="tableData"
-            tableType="credit"
+            :tableType="activeTab"
         /></el-tab-pane>
       </el-tabs>
     </main>

@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-30 22:31:24
+ * @LastEditTime: 2023-11-03 16:27:44
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -14,8 +14,8 @@
       style="width: 100%"
     >
       <el-table-column prop="date" label="板块" width="150">
-        <el-table-column prop="test1" label="大类"></el-table-column>
-        <el-table-column prop="test2" label="子类"></el-table-column>
+        <el-table-column prop="plate_type_name" label="大类"></el-table-column>
+        <el-table-column prop="plate_code_name" label="子类"></el-table-column>
       </el-table-column>
       <el-table-column label="压力情景">
         <el-table-column
@@ -24,25 +24,15 @@
           :prop="key"
           :label="key"
         >
+          <el-table-column :key="`label_${key}`" :prop="`label_${key}`" />
+          <el-table-column :key="`value_${key}`" :prop="`value_${key}`" />
           <el-table-column
-            :key="`volatility_value_${key}`"
-            prop="test11"
-            label=""
+            :key="`volatility_down_${key}`"
+            :prop="`volatility_down_${key}`"
           />
           <el-table-column
-            :key="`volatility_value_${key}`"
-            prop="test12"
-            label=""
-          />
-          <el-table-column
-            :key="`credit_min_profit_${key}`"
-            prop="test13"
-            label=""
-          />
-          <el-table-column
-            :key="`credit_min_profit_${key}`"
-            prop="test14"
-            label=""
+            :key="`volatility_up_${key}`"
+            :prop="`volatility_down_${key}`"
           />
         </el-table-column>
       </el-table-column>
@@ -51,7 +41,10 @@
 </template>
 
 <script>
-import { groupByArray } from '../utils'
+import { groupByArray, transform, groupByDeep } from '../utils'
+const CALC_LABEL_TYPE1 = '计算结果'
+const CALC_LABEL_TYPE2 = '标的价格涨跌'
+const VOLATILITY_LABEL = '波动率涨跌'
 
 export default {
   name: 'StressTestPageTable',
@@ -60,6 +53,10 @@ export default {
     tableData: {
       type: Array,
       default: () => []
+    },
+    tableType: {
+      type: String,
+      default: ''
     }
   },
 
@@ -107,20 +104,112 @@ export default {
           'stress_scene'
         ).arrayGroupByObject
       }
-      const result = []
-
-      Object.keys(tableDataFormatObj).forEach(scene => {
-        tableDataFormatObj[scene].forEach(config => {
-          let newConfig = { ...config }
-          let key = `stress_scene_${scene}`
-          newConfig[key] = newConfig['stress_scene']
-          delete newConfig['stress_scene']
-          result.push(newConfig)
-        })
-      })
-      console.log(tableDataFormatObj)
       // return this.tableData
-      return [{ test1: '测试1' }]
+      const tableDataMap = groupByDeep(
+        this.tableData,
+        ['plate_type_name', 'plate_code_name'],
+        'stress_scene'
+      )
+      console.log()
+      const getDataFormat = (dataArray, key) => {
+        const plateTypeName = key.split('#')[0]
+        const plateCodeName = key.split('#')[1]
+        return [
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE1,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: VOLATILITY_LABEL,
+            volatility_up_ModerateStressScene: VOLATILITY_LABEL,
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE1,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: VOLATILITY_LABEL,
+            volatility_up_SeverStressScene: VOLATILITY_LABEL,
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE1,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: VOLATILITY_LABEL,
+            volatility_up_MildStressScene: VOLATILITY_LABEL
+          },
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE1,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: '-3%',
+            volatility_up_ModerateStressScene: '+3%',
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE1,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: '-3%',
+            volatility_up_SeverStressScene: '+3%',
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE1,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: '-3%',
+            volatility_up_MildStressScene: '+3%'
+          },
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE2,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: '-3%',
+            volatility_up_ModerateStressScene: '+3%',
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE2,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: '-3%',
+            volatility_up_SeverStressScene: '+3%',
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE2,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: '-3%',
+            volatility_up_MildStressScene: '+3%'
+          },
+          {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName,
+            // 轻度压力的计算结果
+            label_ModerateStressScene: CALC_LABEL_TYPE2,
+            value_ModerateStressScene: '123',
+            volatility_down_ModerateStressScene: '-3%',
+            volatility_up_ModerateStressScene: '+3%',
+            // 中度压力数据
+            label_SeverStressScene: CALC_LABEL_TYPE2,
+            value_SeverStressScene: '123',
+            volatility_down_SeverStressScene: '-3%',
+            volatility_up_SeverStressScene: '+3%',
+            // 重度压力数据
+            label_MildStressScene: CALC_LABEL_TYPE2,
+            value_MildStressScene: '123',
+            volatility_down_MildStressScene: '-3%',
+            volatility_up_MildStressScene: '+3%'
+          }
+        ]
+      }
+
+      const tableDataFormatArray = []
+      tableDataMap.forEach((value, key, map) => {
+        tableDataFormatArray.push(getDataFormat(value, key))
+      })
+
+      return tableDataFormatArray.flat().sort((a, b) => {
+        if (a.plate_type_name !== b.plate_type_name) {
+          return a.plate_type_name.localeCompare(b.plate_type_name)
+        }
+
+        if (a.plate_code_name !== b.plate_code_name) {
+          return a.plate_code_name.localeCompare(b.plate_code_name)
+        }
+
+        return 0
+      })
     }
   },
 
