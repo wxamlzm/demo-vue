@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-03 16:27:44
+ * @LastEditTime: 2023-11-05 20:39:53
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -114,13 +114,18 @@ export default {
       const getDataFormat = (dataArray, key) => {
         const plateTypeName = key.split('#')[0]
         const plateCodeName = key.split('#')[1]
+        console.log(dataArray)
         return [
           {
             plate_type_name: plateTypeName,
             plate_code_name: plateCodeName,
             // 轻度压力的计算结果
             label_ModerateStressScene: CALC_LABEL_TYPE1,
-            value_ModerateStressScene: '123',
+            value_ModerateStressScene:
+            // 这里期望根据tableType的值来判断用credit_min_profit或market_min_profit
+              this.tableType === 'market'
+                ? dataArray.MildStressScene[0].market_min_profit
+                : dataArray.MildStressScene[0].credit_min_profit,
             volatility_down_ModerateStressScene: VOLATILITY_LABEL,
             volatility_up_ModerateStressScene: VOLATILITY_LABEL,
             // 中度压力数据
