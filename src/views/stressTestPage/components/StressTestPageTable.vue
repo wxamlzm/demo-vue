@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-06 16:51:35
+ * @LastEditTime: 2023-11-06 22:35:32
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -116,17 +116,36 @@ export default {
         const plateCodeName = key.split('#')[1]
         // console.log(dateObj)
         const array = []
-        for (let i = 0; i <= 3; i++) {
-          const SCENES = [
-            'ModerateStressScene',
-            'SeverStressScene',
-            'MildStressScene'
-          ]
-          const subObj = {}
-          SCENES.forEach(scene => {
-            const a = {
-              plate_type_name: plateTypeName,
-              plate_code_name: plateCodeName,
+        const getData = (scene, index) => {
+          const dataMap = {
+            0: {
+              [`label_${scene}`]: CALC_LABEL_TYPE1,
+              [`value_${scene}`]:
+                this.tableType === 'market'
+                  ? dateObj[scene][0].market_min_profit
+                  : dateObj[scene][0].credit_min_profit,
+              [`volatility_down_${scene}`]: VOLATILITY_LABEL,
+              [`volatility_up_${scene}`]: VOLATILITY_LABEL
+            },
+            1: {
+              [`label_${scene}`]: CALC_LABEL_TYPE1,
+              [`value_${scene}`]:
+                this.tableType === 'market'
+                  ? dateObj[scene][0].market_min_profit
+                  : dateObj[scene][0].credit_min_profit,
+              [`volatility_down_${scene}`]: VOLATILITY_LABEL,
+              [`volatility_up_${scene}`]: VOLATILITY_LABEL
+            },
+            2: {
+              [`label_${scene}`]: CALC_LABEL_TYPE1,
+              [`value_${scene}`]:
+                this.tableType === 'market'
+                  ? dateObj[scene][0].market_min_profit
+                  : dateObj[scene][0].credit_min_profit,
+              [`volatility_down_${scene}`]: VOLATILITY_LABEL,
+              [`volatility_up_${scene}`]: VOLATILITY_LABEL
+            },
+            3: {
               [`label_${scene}`]: CALC_LABEL_TYPE1,
               [`value_${scene}`]:
                 this.tableType === 'market'
@@ -135,6 +154,23 @@ export default {
               [`volatility_down_${scene}`]: VOLATILITY_LABEL,
               [`volatility_up_${scene}`]: VOLATILITY_LABEL
             }
+          }
+          return dataMap[index]
+        }
+        for (let i = 0; i <= 3; i++) {
+          const subObj = {
+            plate_type_name: plateTypeName,
+            plate_code_name: plateCodeName
+          }
+
+          const SCENES = [
+            'ModerateStressScene',
+            'SeverStressScene',
+            'MildStressScene'
+          ]
+          SCENES.forEach(scene => {
+            const a = getData(scene, i)
+            console.log(a)
             Object.assign(subObj, a)
           })
 
