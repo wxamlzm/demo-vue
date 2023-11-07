@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-07 14:52:33
+ * @LastEditTime: 2023-11-07 17:26:33
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -10,36 +10,41 @@
   <el-table
     :data="tableDataFormat"
     :header-cell-style="headerStyle"
+    :span-method="setSpan"
     height="100%"
   >
     <el-table-column prop="date" label="板块" width="150">
-      <el-table-column prop="plate_type_name" label="大类"></el-table-column>
-      <el-table-column prop="plate_code_name" label="子类"></el-table-column>
+      <el-table-column prop="plate_type_name" label="大类" align="center" />
+      <el-table-column prop="plate_code_name" label="子类" align="center" />
     </el-table-column>
     <el-table-column label="压力情景">
       <el-table-column
         v-for="(stressSceneData, key) in tableDataGroupByStressScene"
         :key="key"
         :prop="key"
-        :label="key"
+        :label="getLabelByKey(key)"
       >
         <el-table-column
           :key="`label_${key}`"
           :prop="`label_${key}`"
           width="150"
+          align="center"
         />
         <el-table-column
           :key="`value_${key}`"
           :prop="`value_${key}`"
           width="250"
+          align="center"
         />
         <el-table-column
           :key="`volatility_down_${key}`"
           :prop="`volatility_down_${key}`"
+          align="center"
         />
         <el-table-column
           :key="`volatility_up_${key}`"
           :prop="`volatility_down_${key}`"
+          align="center"
         />
       </el-table-column>
     </el-table-column>
@@ -262,6 +267,67 @@ export default {
       if (rowIndex === 2) {
         return 'display: none'
       }
+
+      return {
+        background: '#eef1f6',
+        color: '#606266',
+        textAlign: 'center'
+      }
+    },
+    // 回调：换算合并列的格式
+    setSpan ({ row, column, rowIndex, columnIndex }) {
+      // console.log(row, column, rowIndex, columnIndex)
+      const prop = column.property
+      if (this.tableDataFormat.length < 1) return
+      // 格式化大类和子类
+
+      if (columnIndex === 0 || columnIndex === 1) {
+        if (
+          rowIndex === 0 ||
+          this.tableDataFormat[rowIndex - 1][prop] !== row[prop]
+        ) {
+          let count = 1
+          let len = this.tableDataFormat.length
+          while (
+            rowIndex + count < len &&
+            row[prop] === this.tableDataFormat[rowIndex + count][prop]
+          ) {
+            count++
+          }
+          return [count, 1]
+        } else {
+          return [0, 0]
+        }
+      }
+      // 格式化label列
+      const labelColumnIndexArr = [2, 3, 6, 7, 10, 11]
+      if (labelColumnIndexArr.includes(columnIndex)) {
+        if (
+          rowIndex === 0 ||
+          this.tableDataFormat[rowIndex - 1][prop] !== row[prop]
+        ) {
+          let count = 1
+          let len = this.tableDataFormat.length
+          while (
+            rowIndex + count < len &&
+            row[prop] === this.tableDataFormat[rowIndex + count][prop]
+          ) {
+            count++
+          }
+          return [count, 1]
+        } else {
+          return [0, 0]
+        }
+      }
+      // 合并波动率涨跌
+    },
+    getLabelByKey (key) {
+      const map = {
+        MildStressScene: '轻度压力',
+        SeverStressScene: '中度压力',
+        ModerateStressScene: '重度压力'
+      }
+      return map[key]
     }
   }
 }
