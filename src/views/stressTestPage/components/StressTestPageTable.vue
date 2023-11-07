@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-07 23:43:13
+ * @LastEditTime: 2023-11-08 00:03:19
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -118,19 +118,13 @@ export default {
       return plateCodeGroup
     },
     tableDataFormat () {
-      const tableDataFormatObj = {}
-      for (const key in this.tableDataGroupByPlateCode) {
-        tableDataFormatObj[key] = groupByArray(
-          this.tableDataGroupByPlateCode[key],
-          'stress_scene'
-        ).arrayGroupByObject
-      }
-      // return this.tableData
       const tableDataMap = groupByDeep(
         this.tableData,
         ['plate_type_name', 'plate_code_name'],
         'stress_scene'
       )
+
+      console.log(tableDataMap)
 
       // 获取数组中对应的type对应的value
       const getValueByType = (key, typeValue, array) => {
@@ -144,7 +138,6 @@ export default {
         return targetItem[`${key}_value`]
       }
 
-      console.log()
       const getDataFormat = (dataObj, key) => {
         const plateTypeName = key.split('#')[0]
         const plateCodeName = key.split('#')[1]
@@ -223,8 +216,22 @@ export default {
       }
 
       const tableDataFormatArray = []
+      console.log(tableDataMap.keys())
+      let lastKey = null
       tableDataMap.forEach((value, key, map) => {
+        const plateTypeName = key.split('#')[0]
+
         tableDataFormatArray.push(getDataFormat(value, key))
+        if (plateTypeName !== lastKey) {
+          debugger
+          const plateTypeName = key.split('#')[0]
+          tableDataFormatArray.push({
+            plate_type_name: plateTypeName,
+            plate_code_name: '合计'
+          })
+        }
+
+        lastKey = plateTypeName
       })
 
       // console.log(tableDataFormatArray)
