@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-07 14:49:50
+ * @LastEditTime: 2023-11-07 14:52:33
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { groupByArray, transform, groupByDeep } from '../utils'
+import { groupByArray, groupByDeep } from '../utils'
 const CALC_LABEL_TYPE1 = '计算结果'
 const CALC_LABEL_TYPE2 = '标的价格涨跌'
 const VOLATILITY_LABEL = '波动率涨跌'
@@ -207,94 +207,6 @@ export default {
           array.push(subObj)
         }
         return array
-        // return [
-        //   {
-        //     plate_type_name: plateTypeName,
-        //     plate_code_name: plateCodeName,
-        //     // 轻度压力的计算结果
-        //     label_ModerateStressScene: CALC_LABEL_TYPE1,
-        //     value_ModerateStressScene:
-        //       // 这里期望根据tableType的值来判断用credit_min_profit或market_min_profit
-        //       this.tableType === 'market'
-        //         ? dataArray.ModerateStressScene[0].market_min_profit
-        //         : dataArray.ModerateStressScene[0].credit_min_profit,
-        //     volatility_down_ModerateStressScene: VOLATILITY_LABEL,
-        //     volatility_up_ModerateStressScene: VOLATILITY_LABEL,
-        //     // 中度压力数据
-        //     label_SeverStressScene: CALC_LABEL_TYPE1,
-        //     value_SeverStressScene:
-        //       this.tableType === 'market'
-        //         ? dataArray.SeverStressScene[0].market_min_profit
-        //         : dataArray.SeverStressScene[0].credit_min_profit,
-        //     volatility_down_SeverStressScene: VOLATILITY_LABEL,
-        //     volatility_up_SeverStressScene: VOLATILITY_LABEL,
-        //     // 重度压力数据
-        //     label_MildStressScene: CALC_LABEL_TYPE1,
-        //     value_MildStressScene:
-        //       this.tableType === 'market'
-        //         ? dataArray.MildStressScene[0].market_min_profit
-        //         : dataArray.MildStressScene[0].credit_min_profit,
-        //     volatility_down_MildStressScene: VOLATILITY_LABEL,
-        //     volatility_up_MildStressScene: VOLATILITY_LABEL
-        //   },
-        //   {
-        //     plate_type_name: plateTypeName,
-        //     plate_code_name: plateCodeName,
-        //     // 轻度压力的计算结果
-        //     label_ModerateStressScene: CALC_LABEL_TYPE1,
-        //     value_ModerateStressScene: '123',
-        //     volatility_down_ModerateStressScene: '-3%',
-        //     volatility_up_ModerateStressScene: '+3%',
-        //     // 中度压力数据
-        //     label_SeverStressScene: CALC_LABEL_TYPE1,
-        //     value_SeverStressScene: '123',
-        //     volatility_down_SeverStressScene: '-3%',
-        //     volatility_up_SeverStressScene: '+3%',
-        //     // 重度压力数据
-        //     label_MildStressScene: CALC_LABEL_TYPE1,
-        //     value_MildStressScene: '123',
-        //     volatility_down_MildStressScene: '-3%',
-        //     volatility_up_MildStressScene: '+3%'
-        //   },
-        //   {
-        //     plate_type_name: plateTypeName,
-        //     plate_code_name: plateCodeName,
-        //     // 轻度压力的计算结果
-        //     label_ModerateStressScene: CALC_LABEL_TYPE2,
-        //     value_ModerateStressScene: '123',
-        //     volatility_down_ModerateStressScene: '-3%',
-        //     volatility_up_ModerateStressScene: '+3%',
-        //     // 中度压力数据
-        //     label_SeverStressScene: CALC_LABEL_TYPE2,
-        //     value_SeverStressScene: '123',
-        //     volatility_down_SeverStressScene: '-3%',
-        //     volatility_up_SeverStressScene: '+3%',
-        //     // 重度压力数据
-        //     label_MildStressScene: CALC_LABEL_TYPE2,
-        //     value_MildStressScene: '123',
-        //     volatility_down_MildStressScene: '-3%',
-        //     volatility_up_MildStressScene: '+3%'
-        //   },
-        //   {
-        //     plate_type_name: plateTypeName,
-        //     plate_code_name: plateCodeName,
-        //     // 轻度压力的计算结果
-        //     label_ModerateStressScene: CALC_LABEL_TYPE2,
-        //     value_ModerateStressScene: '123',
-        //     volatility_down_ModerateStressScene: '-3%',
-        //     volatility_up_ModerateStressScene: '+3%',
-        //     // 中度压力数据
-        //     label_SeverStressScene: CALC_LABEL_TYPE2,
-        //     value_SeverStressScene: '123',
-        //     volatility_down_SeverStressScene: '-3%',
-        //     volatility_up_SeverStressScene: '+3%',
-        //     // 重度压力数据
-        //     label_MildStressScene: CALC_LABEL_TYPE2,
-        //     value_MildStressScene: '123',
-        //     volatility_down_MildStressScene: '-3%',
-        //     volatility_up_MildStressScene: '+3%'
-        //   }
-        // ]
       }
 
       const tableDataFormatArray = []
