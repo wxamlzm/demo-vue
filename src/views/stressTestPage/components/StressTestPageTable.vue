@@ -2,42 +2,48 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-06 22:35:32
+ * @LastEditTime: 2023-11-07 14:49:50
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
 <template>
-  <div class="stress-test-page-table table-border">
-    <el-table
-      :data="tableDataFormat"
-      :header-cell-style="headerStyle"
-      style="width: 100%"
-    >
-      <el-table-column prop="date" label="板块" width="150">
-        <el-table-column prop="plate_type_name" label="大类"></el-table-column>
-        <el-table-column prop="plate_code_name" label="子类"></el-table-column>
-      </el-table-column>
-      <el-table-column label="压力情景">
+  <el-table
+    :data="tableDataFormat"
+    :header-cell-style="headerStyle"
+    height="100%"
+  >
+    <el-table-column prop="date" label="板块" width="150">
+      <el-table-column prop="plate_type_name" label="大类"></el-table-column>
+      <el-table-column prop="plate_code_name" label="子类"></el-table-column>
+    </el-table-column>
+    <el-table-column label="压力情景">
+      <el-table-column
+        v-for="(stressSceneData, key) in tableDataGroupByStressScene"
+        :key="key"
+        :prop="key"
+        :label="key"
+      >
         <el-table-column
-          v-for="(stressSceneData, key) in tableDataGroupByStressScene"
-          :key="key"
-          :prop="key"
-          :label="key"
-        >
-          <el-table-column :key="`label_${key}`" :prop="`label_${key}`" />
-          <el-table-column :key="`value_${key}`" :prop="`value_${key}`" />
-          <el-table-column
-            :key="`volatility_down_${key}`"
-            :prop="`volatility_down_${key}`"
-          />
-          <el-table-column
-            :key="`volatility_up_${key}`"
-            :prop="`volatility_down_${key}`"
-          />
-        </el-table-column>
+          :key="`label_${key}`"
+          :prop="`label_${key}`"
+          width="150"
+        />
+        <el-table-column
+          :key="`value_${key}`"
+          :prop="`value_${key}`"
+          width="250"
+        />
+        <el-table-column
+          :key="`volatility_down_${key}`"
+          :prop="`volatility_down_${key}`"
+        />
+        <el-table-column
+          :key="`volatility_up_${key}`"
+          :prop="`volatility_down_${key}`"
+        />
       </el-table-column>
-    </el-table>
-  </div>
+    </el-table-column>
+  </el-table>
 </template>
 
 <script>
@@ -87,7 +93,17 @@ export default {
       // 按stress_scene分组
       const stressSceneResult = groupByArray(this.tableData, 'stress_scene')
       const stressSceneGroup = stressSceneResult.arrayGroupByObject
-      return stressSceneGroup
+      const tableDataGroupByStressSceneSort = {}
+      const SCENES = [
+        'MildStressScene', // 轻度
+        'ModerateStressScene', // 中度
+        'SeverStressScene' //重度
+      ]
+      // 对象排序
+      SCENES.forEach(scene => {
+        tableDataGroupByStressSceneSort[scene] = stressSceneGroup[scene]
+      })
+      return tableDataGroupByStressSceneSort
     },
     // 按压力等级分
     tableDataGroupByPlateCode () {
@@ -110,11 +126,24 @@ export default {
         ['plate_type_name', 'plate_code_name'],
         'stress_scene'
       )
+
+      // 获取数组中对应的type对应的value
+      const getValueByType = (key, typeValue, array) => {
+        const targetItem = array.find(item => {
+          if (
+            item[`${key}_type`].toLowerCase().includes(typeValue.toLowerCase())
+          ) {
+            return item
+          }
+        })
+        return targetItem[`${key}_value`]
+      }
+
       console.log()
-      const getDataFormat = (dateObj, key) => {
+      const getDataFormat = (dataObj, key) => {
         const plateTypeName = key.split('#')[0]
         const plateCodeName = key.split('#')[1]
-        // console.log(dateObj)
+        console.log(dataObj)
         const array = []
         const getData = (scene, index) => {
           const dataMap = {
@@ -122,8 +151,8 @@ export default {
               [`label_${scene}`]: CALC_LABEL_TYPE1,
               [`value_${scene}`]:
                 this.tableType === 'market'
-                  ? dateObj[scene][0].market_min_profit
-                  : dateObj[scene][0].credit_min_profit,
+                  ? dataObj[scene][0].market_min_profit
+                  : dataObj[scene][0].credit_min_profit,
               [`volatility_down_${scene}`]: VOLATILITY_LABEL,
               [`volatility_up_${scene}`]: VOLATILITY_LABEL
             },
@@ -131,28 +160,30 @@ export default {
               [`label_${scene}`]: CALC_LABEL_TYPE1,
               [`value_${scene}`]:
                 this.tableType === 'market'
-                  ? dateObj[scene][0].market_min_profit
-                  : dateObj[scene][0].credit_min_profit,
-              [`volatility_down_${scene}`]: VOLATILITY_LABEL,
-              [`volatility_up_${scene}`]: VOLATILITY_LABEL
+                  ? dataObj[scene][0].market_min_profit
+                  : dataObj[scene][0].credit_min_profit,
+              [`volatility_down_${scene}`]: `${
+                getValueByType('volatility', 'down', dataObj[scene]) * 100
+              }%`,
+              [`volatility_up_${scene}`]: `${
+                getValueByType('volatility', 'up', dataObj[scene]) * 100
+              }%`
             },
             2: {
-              [`label_${scene}`]: CALC_LABEL_TYPE1,
-              [`value_${scene}`]:
-                this.tableType === 'market'
-                  ? dateObj[scene][0].market_min_profit
-                  : dateObj[scene][0].credit_min_profit,
-              [`volatility_down_${scene}`]: VOLATILITY_LABEL,
-              [`volatility_up_${scene}`]: VOLATILITY_LABEL
+              [`label_${scene}`]: CALC_LABEL_TYPE2,
+              [`value_${scene}`]: `${
+                getValueByType('quantile', 'down', dataObj[scene]) * 100
+              }%分数位（标的价格下跌情形）`,
+              [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
+              [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
             },
             3: {
-              [`label_${scene}`]: CALC_LABEL_TYPE1,
-              [`value_${scene}`]:
-                this.tableType === 'market'
-                  ? dateObj[scene][0].market_min_profit
-                  : dateObj[scene][0].credit_min_profit,
-              [`volatility_down_${scene}`]: VOLATILITY_LABEL,
-              [`volatility_up_${scene}`]: VOLATILITY_LABEL
+              [`label_${scene}`]: CALC_LABEL_TYPE2,
+              [`value_${scene}`]: `${
+                getValueByType('quantile', 'up', dataObj[scene]) * 100
+              }%分数位（标的价格上涨情形）`,
+              [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
+              [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
             }
           }
           return dataMap[index]
@@ -164,19 +195,17 @@ export default {
           }
 
           const SCENES = [
-            'ModerateStressScene',
-            'SeverStressScene',
-            'MildStressScene'
+            'MildStressScene', // 轻度
+            'SeverStressScene', // 中度
+            'ModerateStressScene' //重度
           ]
           SCENES.forEach(scene => {
-            const a = getData(scene, i)
-            console.log(a)
-            Object.assign(subObj, a)
+            const data = getData(scene, i)
+            Object.assign(subObj, data)
           })
 
           array.push(subObj)
         }
-        console.log(array)
         return array
         // return [
         //   {

@@ -2,13 +2,16 @@
  * @Author: zd
  * @Date: 2023-10-25 14:04:45
  * @LastEditors: zd
- * @LastEditTime: 2023-10-27 16:42:09
+ * @LastEditTime: 2023-11-07 13:29:39
  * @FilePath: \demo-vue\src\views\stressTestPage\StressTestPage.vue
  * @Description: 压力测试情景
 -->
 
 <template>
-  <div class="global-c-page otc-pnl-warning">
+  <div
+    class="global-c-page otc-pnl-warning"
+    style="height: 100%; display: flex; flex-direction: column"
+  >
     <header class="global-c-screen-main">
       <div class="global-c-screen-div global-c-screen-1-line">
         <div class="global-c-screen-left">
@@ -44,7 +47,10 @@
 
     <div class="global-c-content-transverse-division" />
 
-    <main class="global-c-div-main" style="overflow: auto">
+    <main
+      class="global-c-div-main"
+      style="overflow: auto; flex-grow: 1; height: 0"
+    >
       <el-tabs v-model="activeTab" type="border-card">
         <el-tab-pane label="市场" name="market">
           <StressTestPageTable
