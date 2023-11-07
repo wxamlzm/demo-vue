@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-07 17:26:33
+ * @LastEditTime: 2023-11-07 23:43:13
  * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -167,26 +167,34 @@ export default {
                 this.tableType === 'market'
                   ? dataObj[scene][0].market_min_profit
                   : dataObj[scene][0].credit_min_profit,
-              [`volatility_down_${scene}`]: `${
-                getValueByType('volatility', 'down', dataObj[scene]) * 100
-              }%`,
-              [`volatility_up_${scene}`]: `${
-                getValueByType('volatility', 'up', dataObj[scene]) * 100
-              }%`
+              [`volatility_down_${scene}`]: `${getValueByType(
+                'volatility',
+                'down',
+                dataObj[scene]
+              ) * 100}%`,
+              [`volatility_up_${scene}`]: `${getValueByType(
+                'volatility',
+                'up',
+                dataObj[scene]
+              ) * 100}%`
             },
             2: {
               [`label_${scene}`]: CALC_LABEL_TYPE2,
-              [`value_${scene}`]: `${
-                getValueByType('quantile', 'down', dataObj[scene]) * 100
-              }%分数位（标的价格下跌情形）`,
+              [`value_${scene}`]: `${getValueByType(
+                'quantile',
+                'down',
+                dataObj[scene]
+              ) * 100}%分数位（标的价格下跌情形）`,
               [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
               [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
             },
             3: {
               [`label_${scene}`]: CALC_LABEL_TYPE2,
-              [`value_${scene}`]: `${
-                getValueByType('quantile', 'up', dataObj[scene]) * 100
-              }%分数位（标的价格上涨情形）`,
+              [`value_${scene}`]: `${getValueByType(
+                'quantile',
+                'up',
+                dataObj[scene]
+              ) * 100}%分数位（标的价格上涨情形）`,
               [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
               [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
             }
@@ -294,9 +302,9 @@ export default {
           ) {
             count++
           }
-          return [count, 1]
+          return { rowspan: count, colspan: 1 }
         } else {
-          return [0, 0]
+          return { rowspan: 0, colspan: 0 }
         }
       }
       // 格式化label列
@@ -314,12 +322,22 @@ export default {
           ) {
             count++
           }
-          return [count, 1]
+          return { rowspan: count, colspan: 1 }
         } else {
-          return [0, 0]
+          return { rowspan: 0, colspan: 0 }
         }
       }
       // 合并波动率涨跌
+      if (rowIndex % 4 === 0) {
+        if (columnIndex === 4) return { rowspan: 1, colspan: 2 }
+        if (columnIndex === 5) return { rowspan: 0, colspan: 0 }
+
+        if (columnIndex === 8) return { rowspan: 1, colspan: 2 }
+        if (columnIndex === 9) return { rowspan: 0, colspan: 0 }
+
+        if (columnIndex === 12) return { rowspan: 1, colspan: 2 }
+        if (columnIndex === 13) return { rowspan: 0, colspan: 0 }
+      }
     },
     getLabelByKey (key) {
       const map = {
