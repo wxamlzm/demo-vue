@@ -2,8 +2,8 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-08 00:03:19
- * @FilePath: \demo-vue\src\views\stressTestPage\components\StressTestPageTable.vue
+ * @LastEditTime: 2023-11-08 17:01:24
+ * @FilePath: \zb-risk-web-testing\src\views\otc\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
 <template>
@@ -11,11 +11,17 @@
     :data="tableDataFormat"
     :header-cell-style="headerStyle"
     :span-method="setSpan"
+    :cell-style="setCellStyle"
     height="100%"
   >
     <el-table-column prop="date" label="板块" width="150">
       <el-table-column prop="plate_type_name" label="大类" align="center" />
-      <el-table-column prop="plate_code_name" label="子类" align="center" />
+      <el-table-column
+        prop="plate_code_name"
+        label="子类"
+        align="center"
+        width="120"
+      />
     </el-table-column>
     <el-table-column label="压力情景">
       <el-table-column
@@ -141,53 +147,44 @@ export default {
       const getDataFormat = (dataObj, key) => {
         const plateTypeName = key.split('#')[0]
         const plateCodeName = key.split('#')[1]
-        console.log(dataObj)
         const array = []
+
         const getData = (scene, index) => {
+          const calcValue =
+            this.tableType === 'market'
+              ? dataObj[scene][0].market_min_profit
+              : dataObj[scene][0].credit_min_profit
+
           const dataMap = {
             0: {
               [`label_${scene}`]: CALC_LABEL_TYPE1,
-              [`value_${scene}`]:
-                this.tableType === 'market'
-                  ? dataObj[scene][0].market_min_profit
-                  : dataObj[scene][0].credit_min_profit,
+              [`value_${scene}`]: calcValue,
               [`volatility_down_${scene}`]: VOLATILITY_LABEL,
               [`volatility_up_${scene}`]: VOLATILITY_LABEL
             },
             1: {
               [`label_${scene}`]: CALC_LABEL_TYPE1,
-              [`value_${scene}`]:
-                this.tableType === 'market'
-                  ? dataObj[scene][0].market_min_profit
-                  : dataObj[scene][0].credit_min_profit,
-              [`volatility_down_${scene}`]: `${getValueByType(
-                'volatility',
-                'down',
-                dataObj[scene]
-              ) * 100}%`,
-              [`volatility_up_${scene}`]: `${getValueByType(
-                'volatility',
-                'up',
-                dataObj[scene]
-              ) * 100}%`
+              [`value_${scene}`]: calcValue,
+              [`volatility_down_${scene}`]: `${
+                getValueByType('volatility', 'down', dataObj[scene]) * 100
+              }%`,
+              [`volatility_up_${scene}`]: `${
+                getValueByType('volatility', 'up', dataObj[scene]) * 100
+              }%`
             },
             2: {
               [`label_${scene}`]: CALC_LABEL_TYPE2,
-              [`value_${scene}`]: `${getValueByType(
-                'quantile',
-                'down',
-                dataObj[scene]
-              ) * 100}%分数位（标的价格下跌情形）`,
+              [`value_${scene}`]: `${
+                getValueByType('quantile', 'down', dataObj[scene]) * 100
+              }%分数位（标的价格下跌情形）`,
               [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
               [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
             },
             3: {
               [`label_${scene}`]: CALC_LABEL_TYPE2,
-              [`value_${scene}`]: `${getValueByType(
-                'quantile',
-                'up',
-                dataObj[scene]
-              ) * 100}%分数位（标的价格上涨情形）`,
+              [`value_${scene}`]: `${
+                getValueByType('quantile', 'up', dataObj[scene]) * 100
+              }%分数位（标的价格上涨情形）`,
               [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
               [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
             }
@@ -200,14 +197,14 @@ export default {
             plate_code_name: plateCodeName
           }
 
-          const SCENES = [
+          const sceneLevels = [
             'MildStressScene', // 轻度
-            'SeverStressScene', // 中度
-            'ModerateStressScene' //重度
+            'ModerateStressScene', // 中度
+            'SeverStressScene' //重度
           ]
-          SCENES.forEach(scene => {
-            const data = getData(scene, i)
-            Object.assign(subObj, data)
+          sceneLevels.forEach(scene => {
+            const dataArray = getData(scene, i)
+            Object.assign(subObj, dataArray)
           })
 
           array.push(subObj)
@@ -216,37 +213,77 @@ export default {
       }
 
       const tableDataFormatArray = []
-      console.log(tableDataMap.keys())
       let lastKey = null
+      // 合计
+      let valueMildStressSceneSum = 0
+      let valueModerateStressSceneSum = 0
+      let valueSeverStressSceneSum = 0
+      // 总计
+      let valueMildStressSceneSumAll = 0
+      let valueModerateStressSceneSumAll = 0
+      let valueSeverStressSceneSumAll = 0
+
       tableDataMap.forEach((value, key, map) => {
         const plateTypeName = key.split('#')[0]
-
-        tableDataFormatArray.push(getDataFormat(value, key))
-        if (plateTypeName !== lastKey) {
-          debugger
-          const plateTypeName = key.split('#')[0]
+        // 在大类变更前，加入合计
+        if (plateTypeName !== lastKey && lastKey !== null) {
+          console.log(
+            tableDataFormatArray,
+            valueMildStressSceneSum,
+            valueModerateStressSceneSum,
+            valueSeverStressSceneSum
+          )
           tableDataFormatArray.push({
-            plate_type_name: plateTypeName,
-            plate_code_name: '合计'
+            plate_type_name: lastKey,
+            plate_code_name: '合计',
+            label_MildStressScene: valueMildStressSceneSum,
+            label_ModerateStressScene: valueModerateStressSceneSum,
+            label_SeverStressScene: valueSeverStressSceneSum
           })
+
+          // 重置
+          valueMildStressSceneSum = 0
+          valueModerateStressSceneSum = 0
+          valueSeverStressSceneSum = 0
         }
+        const newRowGroup = getDataFormat(value, key)
+        tableDataFormatArray.push(newRowGroup)
+        // 累加
+        valueMildStressSceneSum += newRowGroup[0].value_MildStressScene
+        valueModerateStressSceneSum += newRowGroup[0].value_ModerateStressScene
+        valueSeverStressSceneSum += newRowGroup[0].value_SeverStressScene
+        // 总计
+        valueMildStressSceneSumAll += newRowGroup[0].value_MildStressScene
+        valueModerateStressSceneSumAll +=
+          newRowGroup[0].value_ModerateStressScene
+        valueSeverStressSceneSumAll += newRowGroup[0].value_SeverStressScene
 
         lastKey = plateTypeName
       })
 
-      // console.log(tableDataFormatArray)
-
-      return tableDataFormatArray.flat().sort((a, b) => {
-        if (a.plate_type_name !== b.plate_type_name) {
-          return a.plate_type_name.localeCompare(b.plate_type_name)
-        }
-
-        if (a.plate_code_name !== b.plate_code_name) {
-          return a.plate_code_name.localeCompare(b.plate_code_name)
-        }
-
-        return 0
+      if (lastKey !== null) {
+        tableDataFormatArray.push({
+          plate_type_name: lastKey,
+          plate_code_name: '合计',
+          label_MildStressScene: valueMildStressSceneSum,
+          label_ModerateStressScene: valueModerateStressSceneSum,
+          label_SeverStressScene: valueSeverStressSceneSum
+        })
+      }
+      console.log(
+        valueMildStressSceneSumAll,
+        valueModerateStressSceneSumAll,
+        valueSeverStressSceneSumAll
+      )
+      tableDataFormatArray.push({
+        plate_type_name: '总计',
+        plate_code_name: '总计',
+        label_MildStressScene: valueMildStressSceneSumAll,
+        label_ModerateStressScene: valueModerateStressSceneSumAll,
+        label_SeverStressScene: valueSeverStressSceneSumAll
       })
+
+      return tableDataFormatArray.flat()
     }
   },
 
@@ -294,8 +331,51 @@ export default {
       // console.log(row, column, rowIndex, columnIndex)
       const prop = column.property
       if (this.tableDataFormat.length < 1) return
-      // 格式化大类和子类
 
+      // 合并总计
+      if (row.plate_code_name === '总计' && columnIndex === 1) {
+        return { colspan: 0, rowspan: 0 }
+      }
+      if (row.plate_type_name === '总计') {
+        if (columnIndex === 0) {
+          return { colspan: 2, rowspan: 1 }
+        }
+
+        const columnIndexLabelArray = [2, 6, 10]
+        if (columnIndex === 1) return { rowspan: 1, colspan: 1 }
+        if (columnIndexLabelArray.includes(columnIndex)) {
+          return { rowspan: 1, colspan: 4 }
+        } else {
+          return { rowspan: 0, colspan: 0 }
+        }
+      }
+
+      // 合并合计
+      if (row.plate_code_name === '合计') {
+        const columnIndexLabelArray = [2, 6, 10]
+        if (columnIndex === 1) return { rowspan: 1, colspan: 1 }
+        if (columnIndexLabelArray.includes(columnIndex)) {
+          return { rowspan: 1, colspan: 4 }
+        } else {
+          return { rowspan: 0, colspan: 0 }
+        }
+      }
+
+      // 合并波动率涨跌
+      if (prop.includes('volatility')) {
+        if (row[prop] === '波动率涨跌') {
+          if (columnIndex === 4) return { rowspan: 1, colspan: 2 }
+          if (columnIndex === 5) return { rowspan: 0, colspan: 0 }
+
+          if (columnIndex === 8) return { rowspan: 1, colspan: 2 }
+          if (columnIndex === 9) return { rowspan: 0, colspan: 0 }
+
+          if (columnIndex === 12) return { rowspan: 1, colspan: 2 }
+          if (columnIndex === 13) return { rowspan: 0, colspan: 0 }
+        }
+      }
+
+      // 格式化大类和子类
       if (columnIndex === 0 || columnIndex === 1) {
         if (
           rowIndex === 0 ||
@@ -317,6 +397,7 @@ export default {
       // 格式化label列
       const labelColumnIndexArr = [2, 3, 6, 7, 10, 11]
       if (labelColumnIndexArr.includes(columnIndex)) {
+        if (row.plate_code_name === '总计') return
         if (
           rowIndex === 0 ||
           this.tableDataFormat[rowIndex - 1][prop] !== row[prop]
@@ -334,25 +415,44 @@ export default {
           return { rowspan: 0, colspan: 0 }
         }
       }
-      // 合并波动率涨跌
-      if (rowIndex % 4 === 0) {
-        if (columnIndex === 4) return { rowspan: 1, colspan: 2 }
-        if (columnIndex === 5) return { rowspan: 0, colspan: 0 }
-
-        if (columnIndex === 8) return { rowspan: 1, colspan: 2 }
-        if (columnIndex === 9) return { rowspan: 0, colspan: 0 }
-
-        if (columnIndex === 12) return { rowspan: 1, colspan: 2 }
-        if (columnIndex === 13) return { rowspan: 0, colspan: 0 }
-      }
     },
     getLabelByKey (key) {
       const map = {
         MildStressScene: '轻度压力',
-        SeverStressScene: '中度压力',
-        ModerateStressScene: '重度压力'
+        ModerateStressScene: '中度压力',
+        SeverStressScene: '重度压力'
       }
       return map[key]
+    },
+    // 配置单元格样式
+    setCellStyle ({ row, column, rowIndex, columnIndex }) {
+      const prop = column.property
+      // 合计
+      if (row.plate_code_name === '合计') {
+        const columnIndexLabelArray = [2, 6, 10]
+        if (columnIndexLabelArray.includes(columnIndex)) {
+          return {
+            background: '#92d050'
+          }
+        }
+      }
+      // 总计
+      if (row.plate_code_name === '总计') {
+        const columnIndexLabelArray = [2, 6, 10]
+        if (columnIndexLabelArray.includes(columnIndex)) {
+          return {
+            background: '#ffc000'
+          }
+        }
+      }
+      // 添加计算结果的样式
+      if (prop.includes('value')) {
+        if (isNaN(row[prop]) === false) {
+          return {
+            background: '#ffff00'
+          }
+        }
+      }
     }
   }
 }
