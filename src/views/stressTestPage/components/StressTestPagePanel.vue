@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:04:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-08 10:45:54
+ * @LastEditTime: 2023-11-09 13:42:17
  * @FilePath: \zb-risk-web-testing\src\views\otc\stressTestPage\components\StressTestPagePanel.vue
  * @Description: 压力测试情景
 -->
@@ -33,7 +33,7 @@
             </div>
           </div>
         </div>
-        <div class="global-c-screen-right">
+        <!-- <div class="global-c-screen-right">
           <el-button
             icon="el-icon-download"
             size="mini"
@@ -41,7 +41,7 @@
             @click="onExportClick"
             >导出</el-button
           >
-        </div>
+        </div> -->
       </div>
     </header>
 

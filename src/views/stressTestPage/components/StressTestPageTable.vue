@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-08 17:01:24
+ * @LastEditTime: 2023-11-09 16:07:45
  * @FilePath: \zb-risk-web-testing\src\views\otc\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
@@ -12,6 +12,7 @@
     :header-cell-style="headerStyle"
     :span-method="setSpan"
     :cell-style="setCellStyle"
+    class="stress-table"
     height="100%"
   >
     <el-table-column prop="date" label="板块" width="150">
@@ -33,24 +34,30 @@
         <el-table-column
           :key="`label_${key}`"
           :prop="`label_${key}`"
+          :formatter="moneyFormatter"
           width="150"
           align="center"
         />
         <el-table-column
           :key="`value_${key}`"
           :prop="`value_${key}`"
+          :formatter="moneyFormatter"
           width="250"
           align="center"
         />
         <el-table-column
           :key="`volatility_down_${key}`"
           :prop="`volatility_down_${key}`"
+          :formatter="moneyFormatter"
           align="center"
+          width="150"
         />
         <el-table-column
           :key="`volatility_up_${key}`"
-          :prop="`volatility_down_${key}`"
+          :prop="`volatility_up_${key}`"
+          :formatter="moneyFormatter"
           align="center"
+          width="150"
         />
       </el-table-column>
     </el-table-column>
@@ -59,6 +66,7 @@
 
 <script>
 import { groupByArray, groupByDeep } from '../utils'
+import tableFormatter from '@/utils/tableFormatter'
 const CALC_LABEL_TYPE1 = '计算结果'
 const CALC_LABEL_TYPE2 = '标的价格涨跌'
 const VOLATILITY_LABEL = '波动率涨跌'
@@ -89,16 +97,6 @@ export default {
   },
 
   computed: {
-    // 按大类分组
-    tableDataGroupBymainCategory () {
-      // 按plate_type_name分组
-      const plateTypeNameResult = groupByArray(
-        this.tableData,
-        'plate_type_name'
-      )
-      const plateTypeNameGroup = plateTypeNameResult.arrayGroupByObject
-      return plateTypeNameGroup
-    },
     // 按压力等级分
     tableDataGroupByStressScene () {
       // 按stress_scene分组
@@ -116,21 +114,17 @@ export default {
       })
       return tableDataGroupByStressSceneSort
     },
-    // 按压力等级分
-    tableDataGroupByPlateCode () {
-      // 按stress_scene分组
-      const plateCodeResult = groupByArray(this.tableData, 'plate_code')
-      const plateCodeGroup = plateCodeResult.arrayGroupByObject
-      return plateCodeGroup
-    },
     tableDataFormat () {
+      const tableData = this.tableData
+      // 按tableData数组中的对象的order_index排序
+      tableData.sort((a, b) => {
+        return a.order_index - b.order_index
+      })
       const tableDataMap = groupByDeep(
-        this.tableData,
+        tableData,
         ['plate_type_name', 'plate_code_name'],
         'stress_scene'
       )
-
-      console.log(tableDataMap)
 
       // 获取数组中对应的type对应的value
       const getValueByType = (key, typeValue, array) => {
@@ -142,6 +136,25 @@ export default {
           }
         })
         return targetItem[`${key}_value`]
+      }
+      // 获取对应波动率方向的today_profit
+      const getTodayProfit = (VolatilityType, quantileType, array) => {
+        const targetItem = array.find(item => {
+          const isVolatilityMatch = item.volatility_type
+            .toLowerCase()
+            .includes(VolatilityType.toLowerCase())
+          const isQuantileMatch = item.quantile_type
+            .toLowerCase()
+            .includes(quantileType.toLowerCase())
+
+          if (isVolatilityMatch && isQuantileMatch) {
+            return item
+          }
+        })
+
+        return this.tableType === 'market'
+          ? targetItem.today_profit
+          : targetItem.option_profit
       }
 
       const getDataFormat = (dataObj, key) => {
@@ -177,16 +190,32 @@ export default {
               [`value_${scene}`]: `${
                 getValueByType('quantile', 'down', dataObj[scene]) * 100
               }%分数位（标的价格下跌情形）`,
-              [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
-              [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
+              [`volatility_down_${scene}`]: getTodayProfit(
+                'down',
+                'down',
+                dataObj[scene]
+              ),
+              [`volatility_up_${scene}`]: getTodayProfit(
+                'up',
+                'down',
+                dataObj[scene]
+              )
             },
             3: {
               [`label_${scene}`]: CALC_LABEL_TYPE2,
               [`value_${scene}`]: `${
                 getValueByType('quantile', 'up', dataObj[scene]) * 100
               }%分数位（标的价格上涨情形）`,
-              [`volatility_down_${scene}`]: dataObj[scene][0].today_profit,
-              [`volatility_up_${scene}`]: dataObj[scene][0].today_profit
+              [`volatility_down_${scene}`]: getTodayProfit(
+                'down',
+                'up',
+                dataObj[scene]
+              ),
+              [`volatility_up_${scene}`]: getTodayProfit(
+                'up',
+                'up',
+                dataObj[scene]
+              )
             }
           }
           return dataMap[index]
@@ -227,12 +256,6 @@ export default {
         const plateTypeName = key.split('#')[0]
         // 在大类变更前，加入合计
         if (plateTypeName !== lastKey && lastKey !== null) {
-          console.log(
-            tableDataFormatArray,
-            valueMildStressSceneSum,
-            valueModerateStressSceneSum,
-            valueSeverStressSceneSum
-          )
           tableDataFormatArray.push({
             plate_type_name: lastKey,
             plate_code_name: '合计',
@@ -270,47 +293,22 @@ export default {
           label_SeverStressScene: valueSeverStressSceneSum
         })
       }
-      console.log(
-        valueMildStressSceneSumAll,
-        valueModerateStressSceneSumAll,
-        valueSeverStressSceneSumAll
-      )
-      tableDataFormatArray.push({
-        plate_type_name: '总计',
-        plate_code_name: '总计',
-        label_MildStressScene: valueMildStressSceneSumAll,
-        label_ModerateStressScene: valueModerateStressSceneSumAll,
-        label_SeverStressScene: valueSeverStressSceneSumAll
-      })
+
+      if (tableDataFormatArray.length > 0) {
+        tableDataFormatArray.push({
+          plate_type_name: '总计',
+          plate_code_name: '总计',
+          label_MildStressScene: valueMildStressSceneSumAll,
+          label_ModerateStressScene: valueModerateStressSceneSumAll,
+          label_SeverStressScene: valueSeverStressSceneSumAll
+        })
+      }
 
       return tableDataFormatArray.flat()
     }
   },
 
   methods: {
-    initTable () {
-      this.setCellWidth()
-    },
-
-    setCellWidth () {
-      const stressTestTableDom = this.$refs.stressTestTableRef
-      const mainTableTitleDom = stressTestTableDom?.querySelector(
-        '.table-main-category'
-      )
-      const subTableTitleDom = stressTestTableDom?.querySelector(
-        '.table-sub-category'
-      )
-      const mainTitleWidth = mainTableTitleDom?.offsetWidth
-      const subTitleWidth = subTableTitleDom?.offsetWidth
-      const sum = mainTitleWidth + subTitleWidth
-      console.log(mainTitleWidth, subTitleWidth)
-      this.sumCategoryCellWidth = `${sum}px`
-    },
-    // 同步字标题宽度
-    updateLabelWidth (width) {
-      this.subHeaderWidth = width
-      this.initTable()
-    },
     // 处理表头样式
     headerStyle ({ row, column, rowIndex, columnIndex }) {
       row, column, rowIndex, columnIndex
@@ -321,14 +319,13 @@ export default {
       }
 
       return {
-        background: '#eef1f6',
-        color: '#606266',
-        textAlign: 'center'
+        color: '#000',
+        textAlign: 'center',
+        fontSize: '18px'
       }
     },
     // 回调：换算合并列的格式
     setSpan ({ row, column, rowIndex, columnIndex }) {
-      // console.log(row, column, rowIndex, columnIndex)
       const prop = column.property
       if (this.tableDataFormat.length < 1) return
 
@@ -427,86 +424,61 @@ export default {
     // 配置单元格样式
     setCellStyle ({ row, column, rowIndex, columnIndex }) {
       const prop = column.property
+
+      const cellStyle = {
+        borderColor: '#000'
+      }
       // 合计
       if (row.plate_code_name === '合计') {
+        cellStyle.fontWeight = 'bold'
         const columnIndexLabelArray = [2, 6, 10]
         if (columnIndexLabelArray.includes(columnIndex)) {
-          return {
-            background: '#92d050'
-          }
+          cellStyle.background = '#92d050'
         }
       }
       // 总计
       if (row.plate_code_name === '总计') {
+        cellStyle.fontWeight = 'bold'
         const columnIndexLabelArray = [2, 6, 10]
         if (columnIndexLabelArray.includes(columnIndex)) {
-          return {
-            background: '#ffc000'
-          }
+          cellStyle.color = 'red'
+          cellStyle.background = '#ffc000'
         }
       }
       // 添加计算结果的样式
+      if (row[prop] === '计算结果') {
+        cellStyle.color = 'red'
+      }
       if (prop.includes('value')) {
         if (isNaN(row[prop]) === false) {
-          return {
-            background: '#ffff00'
-          }
+          cellStyle.color = 'red'
+          cellStyle.background = '#ffff00'
         }
       }
+
+      // 大类的字体纵向并且字号加大
+      if (columnIndex === 0) {
+        cellStyle.fontSize = '18px'
+        cellStyle.fontWeight = 'bold'
+        if (row[prop] !== '总计') {
+          cellStyle.writingMode = 'vertical-rl'
+        }
+      }
+
+      return cellStyle
+    },
+    // 格式化一列中的金额，但保留其他值为原值
+    moneyFormatter (row, column, cellValue) {
+      return tableFormatter.commonMoneyFormatter(cellValue, 2)
     }
   }
 }
 </script>
-
 <style lang="stylus">
-.stress-test-page-table {
-  width: 100%;
-  overflow:auto;
-  position: relative;
-
-  .table-header {
-    // 让两个子项横向排列
-    width: 100%;
-    display: flex;
-    // 添加border
-    div {
-      width: auto;
-    }
-    div.data-col {
-      flex-grow:1;
-    }
-
-    // 子标题样式
-    .sub-header {
-      display: flex;
-      div {
-        flex-grow:1;
-      }
-    }
-  }
-
-  .table-cell {
-      border: 1px solid #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding:5px;
-      box-sizing: border-box;
-      border-right:none;
-      border-bottom:none;
-      flex-shrink: 0;
-  }
-
-  // 子类的样式，期望让遍历渲染的子类能呈现对齐的样式
-  .table-sub-category {
-    width:100px;
-  }
-  // 列表中的label样式，一般用于渲染固定字符串
-  .table-label {
-    width: 120px;
-  }
-  .table-value {
-    width: 250px;
+.stress-table {
+  // border: 1px solid #000;
+  thead.is-group th.el-table__cell {
+    background-color: #f5f7fa;
   }
 }
 </style>
