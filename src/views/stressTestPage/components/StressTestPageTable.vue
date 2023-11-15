@@ -2,8 +2,8 @@
  * @Author: zd
  * @Date: 2023-10-25 14:43:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-09 16:07:45
- * @FilePath: \zb-risk-web-testing\src\views\otc\stressTestPage\components\StressTestPageTable.vue
+ * @LastEditTime: 2023-11-15 14:57:04
+ * @FilePath: \zb-risk-web-dev\src\views\otc\stressTestPage\components\StressTestPageTable.vue
  * @Description: 压力情景测试的列表
 -->
 <template>
@@ -15,13 +15,13 @@
     class="stress-table"
     height="100%"
   >
-    <el-table-column prop="date" label="板块" width="150">
+    <el-table-column prop="date" label="板块" width="120">
       <el-table-column prop="plate_type_name" label="大类" align="center" />
       <el-table-column
         prop="plate_code_name"
         label="子类"
         align="center"
-        width="120"
+        width="100"
       />
     </el-table-column>
     <el-table-column label="压力情景">
@@ -35,7 +35,7 @@
           :key="`label_${key}`"
           :prop="`label_${key}`"
           :formatter="moneyFormatter"
-          width="150"
+          width="110"
           align="center"
         />
         <el-table-column
@@ -320,8 +320,7 @@ export default {
 
       return {
         color: '#000',
-        textAlign: 'center',
-        fontSize: '18px'
+        textAlign: 'center'
       }
     },
     // 回调：换算合并列的格式
@@ -479,6 +478,13 @@ export default {
   // border: 1px solid #000;
   thead.is-group th.el-table__cell {
     background-color: #f5f7fa;
+  }
+ .el-table__cell {
+    padding: 6px 0;
+    .cell {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
   }
 }
 </style>
