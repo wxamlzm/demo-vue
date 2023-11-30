@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-27 15:57:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-15 09:50:25
+ * @LastEditTime: 2023-11-30 14:24:59
  * @FilePath: \demo-vue\src\router\index.js
  * @Description:
  */
@@ -26,6 +26,15 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  },
+  {
+    path: '/messageEl',
+    name: 'MessageEl',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import(/* webpackChunkName: "MessageEl" */ '../views/messageEl/MessageEl.vue')
   }
 ]
 
