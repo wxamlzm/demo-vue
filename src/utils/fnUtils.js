@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-01 02:10:51
  * @LastEditors: zd
- * @LastEditTime: 2023-12-01 15:52:01
+ * @LastEditTime: 2023-12-12 13:57:08
  * @Description: 公共方法
  */
 import CryptoJS from 'crypto-js'
@@ -20,4 +20,18 @@ export const goEncryptPassword = password => {
   }
 
   return goEncryptRSA(passwordMD5)
+}
+
+
+// 防抖
+export const debounce = (fn, delay) => {
+  let timer = null
+  return function () {
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      fn.apply(this, arguments)
+    }, delay)
+  }
 }
