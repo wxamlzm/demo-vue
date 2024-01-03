@@ -2,7 +2,7 @@
  * @Author: zd
  * @Date: 2023-10-27 15:57:45
  * @LastEditors: zd
- * @LastEditTime: 2023-11-30 14:24:59
+ * @LastEditTime: 2024-01-03 09:33:53
  * @FilePath: \demo-vue\src\router\index.js
  * @Description:
  */
@@ -34,7 +34,15 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "MessageEl" */ '../views/messageEl/MessageEl.vue')
+      import(
+        /* webpackChunkName: "MessageEl" */ '../views/messageEl/MessageEl.vue'
+      )
+  },
+  {
+    path: '/alertEl',
+    name: 'AlertEl',
+    component: () =>
+      import(/* webpackChunkName: "AlertEl" */ '../views/alertEl/AlertEl.vue')
   }
 ]
 
