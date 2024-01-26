@@ -43,6 +43,14 @@ const routes = [
     name: 'AlertEl',
     component: () =>
       import(/* webpackChunkName: "AlertEl" */ '../views/alertEl/AlertEl.vue')
+  },
+  {
+    path: '/formLinkage',
+    name: 'FormLinkage',
+    component: () =>
+      import(
+        /* webpackChunkName: "FormLinkage" */ '../views/formLinkage/FormLinkage.vue'
+      )
   }
 ]
 
